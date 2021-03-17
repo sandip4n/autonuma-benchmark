@@ -74,7 +74,8 @@ int main()
 	int f;
 	unsigned long nodemask __attribute__((__unused__));
 
-	nodemask_global = (time(NULL) & 1) + 1;
+	nodemask_global = 1UL << __builtin_ctz((time(NULL) & 1) ?
+						NODEMASK1 : NODEMASK2);
 	f = creat("lock", 0400);
 	if (f < 0)
 		perror("creat"), exit(1);
