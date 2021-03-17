@@ -31,6 +31,6 @@ while :
 do
 	TIME=`date +%s`
 	TIME=$(($TIME-$BEGINTIME))
-	./nmstat -v `pidof $1` | awk -v t=$TIME '/total/ {for(i=2;i<=NF;i++) {sum[i]+=$i}} END {printf "%d ",t; for(i=2;i<=NF;i++) {printf "%.2f ",sum[i]} print ""}' >> $1.txt
+	numastat -v `pidof $1` | awk -v t=$TIME '/^Total/ { for (i = 2; i < NF; i++) { sum[i] += $i } } END { printf "%d ", t; for (i = 2; i < NF; i++) { printf "%.2f ", sum[i] } print "" }' >> $1.txt
 	sleep $PERIOD
 done
