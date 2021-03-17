@@ -9,33 +9,15 @@
 #  Tool for AutoNUMA benchmarking scripts
 #
 
-# TODO 
-#	sparse numbering of nodes 
-
 function get_mask(from, to)
 {
-	mask = ""
+	mask = 0
 
-	for (i = 0; i <= to; i++) {
-		if (i >= from && i <= to)
-			mask = "1"mask
-		else
-			mask = "0"mask
+	for (i = from; i <= to; i++) {
+		mask = or(mask, lshift(1, nodeids[i]))
 	}
 
-	return bin2dec(mask)
-}
-
-function bin2dec(bin)
-{
-	res = 0
-
-	for (i = length(bin); i > 0; i--) {
-		if (substr(bin,i,1) == "1")
-			res += 2**(length(bin)-i)
-	}
-
-	return res
+	return mask
 }
 
 BEGIN \
@@ -54,8 +36,23 @@ BEGIN \
 /available/ \
 {
 	nodes = $2
-	nodemask1 = get_mask(0, $2 / 2 - 1)
-	nodemask2 = get_mask($2 / 2, $2 - 1)
+	numnodes = 0
+	split(substr($4, 2, length($4) - 2), nodelist, ",")
+
+	for (i in nodelist) {
+		if (match(nodelist[i], "([0-9]+)\\-([0-9]+)", range)) {
+			for (j = range[1]; j <= range[2]; j++) {
+				nodeids[numnodes] = j
+				numnodes++
+			}
+		} else if (match(nodelist[i], "[0-9]+", node)) {
+			nodeids[numnodes] = node[0]
+			numnodes++
+		}
+	}
+
+	nodemask1 = get_mask(0, int(nodes / 2 - 1))
+	nodemask2 = get_mask(int(nodes / 2), nodes - 1)
 	first_h = "\t\tnodemask = "nodemask1";\n"
 	second_h = "\t\tnodemask = "nodemask2";\n"
 	ndmask1 = "#define NODEMASK1 "nodemask1
@@ -66,7 +63,7 @@ BEGIN \
 {
 	curr = $2
 	# NUMA01
-	if (curr < nodes / 2) {
+	if (curr < nodeids[nodes / 2]) {
 		for (i = 4; i <= NF; i++)
 			first_h	= first_h"\t\tCPU_SET_S("$i", cpumasksz, cpumask);\n"
 	} else {
@@ -79,6 +76,13 @@ BEGIN \
 		nodemap = nodemap"\t\t\tCPU_SET_S("$i", cpumasksz, cpumask);\n"
 	nodemap = nodemap"\t\t\tbreak;\n"
 	bindmap = bindmap"\tbind("curr");\n\tbzero(p"
+
+	for (i = 0; i < length(nodeids); i++)
+		if (curr == nodeids[i]) {
+			curr = i
+			break
+		}
+
 	for (i = 0; i < curr; i++)
 		bindmap = bindmap"+SIZE/"nodes
 	bindmap = bindmap", SIZE/"nodes");\n"

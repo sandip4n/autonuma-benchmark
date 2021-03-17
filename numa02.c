@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <numa.h>
 #include <numaif.h>
 #include <sched.h>
 #include <sys/wait.h>
@@ -88,9 +89,9 @@ int main()
 	for (i = 0; i < THREADS; i++) {
 		char *_p = p + THREAD_SIZE * i;
 #ifdef INVERSE_BIND
-		bind((THREADS - 1 - i) / (THREADS/NNODES));
+		bind(numa_node_of_cpu(THREADS - 1 - i));
 #else
-		bind(i / (THREADS/NNODES));
+		bind(numa_node_of_cpu(i));
 #endif
 		if (pthread_create(&pthread[i], NULL, thread, _p) != 0)
 			perror("pthread_create"), exit(1);
