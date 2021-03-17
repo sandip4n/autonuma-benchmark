@@ -46,7 +46,6 @@ static void *thread(void * arg)
 #ifdef HARD_BIND
 static void bind(int node)
 {
-	int i;
 	unsigned long nodemask;
 	cpu_set_t *cpumask;
 	size_t cpumasksz;
@@ -79,8 +78,6 @@ int main()
 	int i;
 	pthread_t pthread[THREADS];
 	char *p;
-	pid_t pid;
-	int f;
 
 	p = malloc(SIZE);
 	if (!p)

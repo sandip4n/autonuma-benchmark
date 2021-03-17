@@ -72,7 +72,7 @@ int main()
 	size_t cpumasksz;
 	int ncpus;
 	int f;
-	unsigned long nodemask;
+	unsigned long nodemask __attribute__((__unused__));
 
 	nodemask_global = (time(NULL) & 1) + 1;
 	f = creat("lock", 0400);
