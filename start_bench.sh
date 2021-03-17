@@ -54,12 +54,12 @@ test_numa()
 	fi
 }
 
-test_ht()
+test_smt()
 {
 	if [ $SIBLINGS -eq $CORES ] ; then
-		echo "Hyper-Threading IS NOT enabled."
+		echo "SMT IS NOT enabled."
 	else
-		echo "Hyper-Threading IS enabled."
+		echo "SMT IS enabled."
 	fi
 }
 
@@ -96,7 +96,7 @@ run_test()
 run_bench()
 {
 	make
-	test_ht
+	test_smt
 	TESTNAME=numa01
 	run_test
 	if [ $TALLOC -eq 1 ] ; then
