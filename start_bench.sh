@@ -35,8 +35,19 @@ test_numa()
 		echo "Abort: This machine has less than 2 nodes."
 		exit 1
 	fi
-	SIBLINGS=`grep -m 1 'siblings' /proc/cpuinfo | cut -f2 -d':'`
-	CORES=`grep -m 1 'cpu cores' /proc/cpuinfo | cut -f2 -d':'`
+
+	case "$(uname -m)" in
+	ppc64|ppc64le)
+		THREADS=`ppc64_cpu --smt -n | cut -f2 -d '='`
+		CORES=`ppc64_cpu --cores-on | cut -f2 -d '='`
+		SIBLINGS=$[CORES*THREADS]
+		;;
+	*)
+		SIBLINGS=`grep -m 1 'siblings' /proc/cpuinfo | cut -f2 -d':'`
+		CORES=`grep -m 1 'cpu cores' /proc/cpuinfo | cut -f2 -d':'`
+		;;
+	esac
+
 	if [ $MOF -ne 0 -a $MOF -le $CORES ]; then
 		MOF=$[MOF*NUMNODES]
 		echo "Migrate on fault test, use $MOF CPUs."
