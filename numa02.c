@@ -16,6 +16,7 @@
 #include <sched.h>
 #include <sys/wait.h>
 #include <sys/file.h>
+#include <sys/sysinfo.h>
 
 CPUNUM
 NODENUM
@@ -46,18 +47,27 @@ static void bind(int node)
 {
 	int i;
 	unsigned long nodemask;
-	cpu_set_t cpumask;
-	CPU_ZERO(&cpumask);
+	cpu_set_t *cpumask;
+	size_t cpumasksz;
+	int ncpus;
+
+	ncpus = get_nprocs();
+	cpumasksz = CPU_ALLOC_SIZE(ncpus);
+	cpumask = CPU_ALLOC(ncpus);
+	CPU_ZERO_S(cpumasksz, cpumask);
+
 	nodemask = 0x1 << node;
 	switch (node) {
 		NODEMAP
 		default:
 			break;
 	}
-	if (sched_setaffinity(0, sizeof(cpumask), &cpumask) < 0)
+	if (sched_setaffinity(0, cpumasksz, cpumask) < 0)
 		perror("sched_setaffinity"), exit(1);
 	if (set_mempolicy(MPOL_BIND, &nodemask, 9) < 0)
 		perror("set_mempolicy"), printf("%lu\n", nodemask), exit(1);
+
+	CPU_FREE(cpumask);
 }
 #else
 static void bind(int node) {}

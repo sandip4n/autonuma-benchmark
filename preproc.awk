@@ -68,15 +68,15 @@ BEGIN \
 	# NUMA01
 	if (curr < nodes / 2) {
 		for (i = 4; i <= NF; i++)
-			first_h	= first_h"\t\tCPU_SET("$i", &cpumask);\n"
+			first_h	= first_h"\t\tCPU_SET_S("$i", cpumasksz, cpumask);\n"
 	} else {
 		for (i = 4; i <= NF; i++)
-			second_h = second_h"\t\tCPU_SET("$i", &cpumask);\n"
+			second_h = second_h"\t\tCPU_SET_S("$i", cpumasksz, cpumask);\n"
 	}
 	# NUMA02
 	nodemap = nodemap"\t\tcase "curr":\n"
 	for (i = 4; i <= NF; i++)
-		nodemap = nodemap"\t\t\tCPU_SET("$i", &cpumask);\n"
+		nodemap = nodemap"\t\t\tCPU_SET_S("$i", cpumasksz, cpumask);\n"
 	nodemap = nodemap"\t\t\tbreak;\n"
 	bindmap = bindmap"\tbind("curr");\n\tbzero(p"
 	for (i = 0; i < curr; i++)

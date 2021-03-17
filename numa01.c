@@ -17,6 +17,7 @@
 #include <time.h>
 #include <sys/wait.h>
 #include <sys/file.h>
+#include <sys/sysinfo.h>
 
 THREADS_VAL
 NDMASK1
@@ -67,7 +68,9 @@ int main()
 	pthread_t pthread[THREADS];
 	char *p;
 	pid_t pid;
-	cpu_set_t cpumask;
+	cpu_set_t *cpumask;
+	size_t cpumasksz;
+	int ncpus;
 	int f;
 	unsigned long nodemask;
 
@@ -84,7 +87,12 @@ int main()
 	p_global = p = malloc(SIZE);
 	if (!p)
 		perror("malloc"), exit(1);
-	CPU_ZERO(&cpumask);
+
+	ncpus = get_nprocs();
+	cpumasksz = CPU_ALLOC_SIZE(ncpus);
+	cpumask = CPU_ALLOC(ncpus);
+	CPU_ZERO_S(cpumasksz, cpumask);
+
 	if (!pid) {
 		FIRST_HALF
 	} else {
@@ -97,7 +105,7 @@ int main()
 		nodemask = NODEMASK2;
 #endif
 #ifdef HARD_BIND
-	if (sched_setaffinity(0, sizeof(cpumask), &cpumask) < 0)
+	if (sched_setaffinity(0, cpumasksz, cpumask) < 0)
 		perror("sched_setaffinity"), exit(1);
 #endif
 #ifdef HARD_BIND
@@ -118,5 +126,7 @@ int main()
 	if (pid)
 		if (wait(NULL) < 0)
 			perror("wait"), exit(1);
+
+	CPU_FREE(cpumask);
 	return 0;
 }
