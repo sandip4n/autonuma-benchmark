@@ -46,13 +46,13 @@ void *thread(void * arg)
 	int nr = 1000;
 #endif
 #ifdef NO_BIND_FORCE_SAME_NODE
-	if (set_mempolicy(MPOL_BIND, &nodemask_global, 3) < 0)
+	if (set_mempolicy(MPOL_BIND, &nodemask_global, 64) < 0)
 		perror("set_mempolicy"), printf("%lu\n", nodemask_global),
 			exit(1);
 #endif
 	bzero(p_global, SIZE);
 #ifdef NO_BIND_FORCE_SAME_NODE
-	if (set_mempolicy(MPOL_DEFAULT, NULL, 3) < 0)
+	if (set_mempolicy(MPOL_DEFAULT, NULL, 64) < 0)
 		perror("set_mempolicy"), exit(1);
 #endif
 	for (i = 0; i < nr; i++) {
@@ -109,7 +109,7 @@ int main()
 		perror("sched_setaffinity"), exit(1);
 #endif
 #ifdef HARD_BIND
-	if (set_mempolicy(MPOL_BIND, &nodemask, 9) < 0)
+	if (set_mempolicy(MPOL_BIND, &nodemask, 64) < 0)
 		perror("set_mempolicy"), printf("%lu\n", nodemask), exit(1);
 #endif
 	for (i = 0; i < THREADS; i++) {

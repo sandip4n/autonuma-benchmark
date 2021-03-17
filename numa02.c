@@ -65,7 +65,7 @@ static void bind(int node)
 	}
 	if (sched_setaffinity(0, cpumasksz, cpumask) < 0)
 		perror("sched_setaffinity"), exit(1);
-	if (set_mempolicy(MPOL_BIND, &nodemask, 9) < 0)
+	if (set_mempolicy(MPOL_BIND, &nodemask, 64) < 0)
 		perror("set_mempolicy"), printf("%lu\n", nodemask), exit(1);
 
 	CPU_FREE(cpumask);
