@@ -1,5 +1,5 @@
 Couple of scripts for automated benchmarking by numa01 and numa02 programs.
-Requires: numactl-devel, run as root
+Requires: numactl-devel, powerpc-utils (if running on ppc64), run as root
 Recommended: gnuplot (for visualizations)
 
 Run ./start_bench -h for help or ./start_bench -A for all available tests.
@@ -34,3 +34,4 @@ M=1GiB, P=1, T=nr_cpus/2, all threads use per-thread local memory
 Authors: 
 	Andrea Arcangeli <aarcange@redhat.com> - benchmarks and AutoNUMA
 	Petr Holasek <pholasek@redhat.com> - wrapper scripts
+	Sandipan Das <sandipan@linux.ibm.com> - ppc64 and sparse node support
