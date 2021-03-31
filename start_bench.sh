@@ -58,6 +58,7 @@ test_smt()
 {
 	if [ $SIBLINGS -eq $CORES ] ; then
 		echo "SMT IS NOT enabled."
+		SMT=0
 	else
 		echo "SMT IS enabled."
 	fi
