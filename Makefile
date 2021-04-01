@@ -19,7 +19,7 @@ numa01: numa01.c
 	$(CC) $< $(CFLAGS) -DHARD_BIND -DINVERSE_BIND -o numa01_INVERSE_BIND
 	$(CC) $< $(CFLAGS) -DTHREAD_ALLOC -DHARD_BIND -o numa01_THREAD_ALLOC_HARD_BIND
 	$(CC) $< $(CFLAGS) -DTHREAD_ALLOC -DHARD_BIND -DINVERSE_BIND -o numa01_THREAD_ALLOC_INVERSE_BIND
-numa02: numa02.prep.c
+numa02: numa02.c
 	$(CC) $< $(CFLAGS) -o $@
 	$(CC) $< $(CFLAGS) -DHARD_BIND -o numa02_HARD_BIND
 	$(CC) $< $(CFLAGS) -DHARD_BIND -DINVERSE_BIND -o numa02_INVERSE_BIND
@@ -27,4 +27,4 @@ numa02: numa02.prep.c
 	$(CC) $< $(CFLAGS) -DSMT -DHARD_BIND -o numa02_SMT_HARD_BIND
 	$(CC) $< $(CFLAGS) -DSMT -DHARD_BIND -DINVERSE_BIND -o numa02_SMT_INVERSE_BIND
 clean: 
-	rm -f numa01 numa02 numa01_* numa02_* numa02.prep.c *.txt *.pdf
+	rm -f numa01 numa02 numa01_* numa02_* *.txt *.pdf
