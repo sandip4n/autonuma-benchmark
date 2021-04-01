@@ -12,7 +12,7 @@ CFLAGS=-O2 -lnuma -pthread
 
 all: numa01 numa02
 
-numa01: numa01.prep.c
+numa01: numa01.c
 	$(CC) $< $(CFLAGS) -DNO_BIND_FORCE_SAME_NODE -o $@
 	$(CC) $< $(CFLAGS) -DNO_BIND_FORCE_SAME_NODE -DTHREAD_ALLOC -o numa01_THREAD_ALLOC
 	$(CC) $< $(CFLAGS) -DHARD_BIND -o numa01_HARD_BIND
@@ -27,4 +27,4 @@ numa02: numa02.prep.c
 	$(CC) $< $(CFLAGS) -DSMT -DHARD_BIND -o numa02_SMT_HARD_BIND
 	$(CC) $< $(CFLAGS) -DSMT -DHARD_BIND -DINVERSE_BIND -o numa02_SMT_INVERSE_BIND
 clean: 
-	rm -f numa01 numa02 numa01_* numa02_* numa01.prep.c numa02.prep.c *.txt *.pdf
+	rm -f numa01 numa02 numa01_* numa02_* numa02.prep.c *.txt *.pdf

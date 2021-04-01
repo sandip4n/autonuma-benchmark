@@ -66,7 +66,6 @@ test_smt()
 
 parse_numa() 
 {
-	numactl --hardware | gawk -v MoF=$MOF -v file="numa01.c" -f preproc.awk > numa01.prep.c
 	numactl --hardware | gawk -v MoF=$MOF -v file="numa02.c" -f preproc.awk > numa02.prep.c
 }
 
