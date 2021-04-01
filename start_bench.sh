@@ -64,10 +64,6 @@ test_smt()
 	fi
 }
 
-parse_numa() 
-{
-}
-
 do_run_test()
 {
 	echo "$TESTNAME"
@@ -158,5 +154,4 @@ done
 
 test_numa
 cleanup
-parse_numa
 run_bench
