@@ -158,12 +158,21 @@ static void bind(int node) {}
 
 int main()
 {
-	int ncpus, node, i, j;
+	int ncpus, i, j;
 	pthread_t *pthread;
 	char *p;
+	int *node_cpu_map;
 
 	init();
 	ncpus = get_nprocs_conf();
+	node_cpu_map = (int*) malloc(nthreads * sizeof(int));
+	for (i = 0; i < nthreads; i++) {
+#ifdef INVERSE_BIND
+		node_cpu_map[i] =  numa_node_of_cpu(ncpus - (i / nsmt + 1) * maxsmt + (i % nsmt));
+#else
+		node_cpu_map[i] = numa_node_of_cpu((i / nsmt) * maxsmt + (i % nsmt));
+#endif
+	}
 	p = malloc(SIZE);
 	if (!p)
 		perror("malloc"), exit(1);
@@ -182,12 +191,7 @@ int main()
 
 	for (i = 0; i < nthreads; i++) {
 		char *_p = p + threadsz * i;
-#ifdef INVERSE_BIND
-		node = numa_node_of_cpu(ncpus - (i / nsmt + 1) * maxsmt + (i % nsmt));
-#else
-		node = numa_node_of_cpu((i / nsmt) * maxsmt + (i % nsmt));
-#endif
-		bind(node);
+		bind(node_cpu_map[i]);
 		if (pthread_create(&pthread[i], NULL, thread, _p) != 0)
 			perror("pthread_create"), exit(1);
 	}
